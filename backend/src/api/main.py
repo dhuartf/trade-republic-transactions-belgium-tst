@@ -13,6 +13,8 @@ from ..parsers import LLMParser
 from ..parsers.pdf_parser import PDFParser
 from ..storage.dynamodb_service import DynamoDBService
 from ..utils import aggregate_transactions
+from dotenv import load_dotenv
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(

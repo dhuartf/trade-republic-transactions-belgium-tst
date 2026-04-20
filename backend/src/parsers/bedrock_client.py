@@ -1,4 +1,9 @@
-import anthropic, base64, logging
+import anthropic
+import base64
+import logging
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 

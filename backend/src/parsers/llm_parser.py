@@ -31,9 +31,6 @@ class LLMParser:
     def __init__(self, **kwargs):
         self.bedrock_client = BedrockClient()
         self.enable_caching = False
-        logger.info(
-            f"(caching {'enabled' if enable_caching else 'disabled'})"
-        )
 
     def parse_transactions(self, pdf_data: bytes) -> List[Transaction]:
         """
