@@ -41,11 +41,7 @@ app.add_middleware(
 
 # Initialize LLM parser with prompt caching enabled
 # Using Claude 3.5 Sonnet (change to Haiku 4.5 after requesting access in AWS Bedrock)
-llm_parser = LLMParser(
-    region_name="eu-west-1",
-    model_id="eu.anthropic.claude-haiku-4-5-20251001-v1:0",
-    enable_caching=True
-)
+llm_parser = LLMParser()  # no region/model_id needed
 
 
 @app.get("/")

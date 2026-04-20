@@ -3,9 +3,8 @@ fastapi==0.115.0
 uvicorn[standard]==0.32.0
 python-multipart==0.0.12
 
-# AWS
-boto3==1.35.36
-botocore==1.35.36
+# Anthropic API Client
+anthropic>=0.25.0  
 
 # PDF Processing
 pdfplumber==0.11.4
