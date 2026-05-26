@@ -11,8 +11,10 @@ from fastapi.responses import JSONResponse
 from ..models import ParseResponse, Transaction
 from ..parsers import LLMParser
 from ..parsers.pdf_parser import PDFParser
-from ..storage.dynamodb_service import DynamoDBService
+from ..storage.SqliteDB_service import SqliteDBService
 from ..utils import aggregate_transactions
+from dotenv import load_dotenv
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -21,13 +23,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-ddb_service = DynamoDBService()
+sqlite_db_service = SqliteDBService()
 
 # Initialize FastAPI app
 app = FastAPI(
     title="Trade Republic Transaction Parser",
-    description="AI-powered PDF transaction parser using AWS Bedrock with multimodal input and prompt caching",
-    version="2.0.0"
+    description="AI-powered PDF transaction parser using Anthropic API with multimodal input and prompt caching",
+    version="2.1.0"
 )
 
 # Configure CORS
@@ -40,12 +42,8 @@ app.add_middleware(
 )
 
 # Initialize LLM parser with prompt caching enabled
-# Using Claude 3.5 Sonnet (change to Haiku 4.5 after requesting access in AWS Bedrock)
-llm_parser = LLMParser(
-    region_name="eu-west-1",
-    model_id="eu.anthropic.claude-haiku-4-5-20251001-v1:0",
-    enable_caching=True
-)
+# Using Claude Haiku 4.5 after
+llm_parser = LLMParser()  
 
 
 @app.get("/")
@@ -54,7 +52,7 @@ async def root():
     return {
         "status": "healthy",
         "service": "Trade Republic Transaction Parser",
-        "version": "1.0.0"
+        "version": "1.1.0"
     }
 
 
@@ -113,13 +111,13 @@ async def parse_pdf(
         logger.info("Parsing transactions with LLM (multimodal PDF input with prompt caching)")
 
         pdf_sha256 = hashlib.sha256(content).hexdigest()
-       
-        if ddb_service.check_pdf_exists(pdf_sha256):
+
+        if sqlite_db_service.check_pdf_exists(pdf_sha256):
             logger.info(f"PDF already processed (SHA256: {pdf_sha256}), retrieving from database")
 
-            transactions = ddb_service.get_transactions_for_pdf(pdf_sha256)
+            transactions = sqlite_db_service.get_transactions_for_pdf(pdf_sha256)
 
-            pdf_metadata = ddb_service.get_pdf_metadata(pdf_sha256)
+            pdf_metadata = sqlite_db_service.get_pdf_metadata(pdf_sha256)
             parsed_at = pdf_metadata["parsedAt"] if pdf_metadata else datetime.now().isoformat()
         else:
             logger.info(f"Parsing new PDF with LLM")
@@ -128,7 +126,7 @@ async def parse_pdf(
             parsed_at = datetime.now().isoformat()
 
             try:
-                ddb_service.store_pdf_with_transactions(
+                sqlite_db_service.store_pdf_with_transactions(
                     pdf_sha256=pdf_sha256,
                     pdf_filename=file.filename,
                     pdf_size=len(content),

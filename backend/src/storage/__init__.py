@@ -1,3 +1,3 @@
-from .dynamodb_service import DynamoDBService
+from .SqliteDB_service import SqliteDBService
 
-__all__ = ["DynamoDBService"]
+__all__ = ["SqliteDBService"]
