@@ -7,7 +7,7 @@ from ..models.transaction import Transaction
 logger = logging.getLogger(__name__)
 DB_PATH = "transactions.db"
 
-class DynamoDBService:
+class SqliteDBService:
     def __init__(self, **kwargs):
         self._init_db()
 
@@ -52,6 +52,5 @@ class DynamoDBService:
                 (pdf_sha256, pdf_filename, pdf_size, parsed_at, len(transactions)))
             for i, t in enumerate(transactions):
                 conn.execute("INSERT INTO transactions VALUES (?,?,?,?,?,?,?,?)",
-                    (pdf_sha256, i, t.date, t.isin, t.product_name,
-                     str(t.quantity), str(t.amount_euros), t.transaction_type))
+                    (pdf_sha256, i, t.date, t.isin, t.product_name, str(t.quantity), str(t.amount_euros), t.transaction_type))
         return pdf_sha256

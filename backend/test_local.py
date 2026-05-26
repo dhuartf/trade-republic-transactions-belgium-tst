@@ -8,7 +8,7 @@ from src.parsers import PDFParser, LLMParser
 from src.utils import aggregate_transactions
 
 def main():
-    pdf_path = "/Users/jonathanbodart/Desktop/Account statement.pdf"
+    pdf_path = r"D:\Finance_Dashboard\Data_TR\TOB\TOB_2602.pdf"
 
     if not Path(pdf_path).exists():
         print(f"Error: PDF not found at {pdf_path}")
@@ -23,16 +23,17 @@ def main():
     print("\n[1/3] Extracting text from PDF...")
     with open(pdf_path, 'rb') as f:
         text = PDFParser.extract_text(f)
+        print(type(text))
 
     print(f"✓ Extracted {len(text):,} characters from PDF")
     print(f"✓ First 200 chars: {text[:200]}...")
 
     # Step 2: Parse with LLM
-    print("\n[2/3] Parsing transactions with AWS Bedrock (Claude)...")
-    print("Note: This requires AWS credentials and Bedrock access")
+    print("\n[2/3] Parsing transactions with Anthropic API (Claude)...")
+    print("Note: This requires an Anthropic API key")
 
     try:
-        llm = LLMParser(region_name="us-east-1")
+        llm = LLMParser()
         transactions = llm.parse_transactions(text)
 
         print(f"✓ Successfully parsed {len(transactions)} transactions")

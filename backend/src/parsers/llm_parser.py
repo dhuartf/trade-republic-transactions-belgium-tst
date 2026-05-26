@@ -11,7 +11,7 @@ import logging
 from typing import List
 
 from ..models.transaction import Transaction
-from .bedrock_client import BedrockClient
+from .claude_client import ClaudeClient
 from .prompts import get_system_prompt, get_user_prompt
 from .response_parser import ResponseParser
 
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 class LLMParser:
     """
-    Uses AWS Bedrock (Claude) to parse transaction data from PDF documents.
+    Uses Claude API to parse transaction data from PDF documents.
 
     This class provides a high-level interface for extracting structured
     transaction data from PDF files using LLMs with multimodal capabilities.
@@ -29,8 +29,8 @@ class LLMParser:
     """
 
     def __init__(self, **kwargs):
-        self.bedrock_client = BedrockClient()
-        self.enable_caching = False
+        self.claude_client = ClaudeClient()
+        self.enable_caching = True
 
     def parse_transactions(self, pdf_data: bytes) -> List[Transaction]:
         """
@@ -54,7 +54,7 @@ class LLMParser:
             user_prompt = get_user_prompt()
 
             # Call the LLM with PDF document
-            response = self.bedrock_client.invoke_with_document(
+            response = self.claude_client.invoke_with_document(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
                 pdf_data=pdf_data,

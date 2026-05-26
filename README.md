@@ -58,18 +58,14 @@ registration-tst/
 ### Prerequisites
 - Python 3.12+
 - Node.js 18+
-- AWS account with Bedrock access (Claude 3.5 Sonnet enabled)
-- AWS CLI configured (`aws configure`)
+- Claude API key
 
 ### 1. Backend Setup
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+venv\Scripts\activate  #On Mac: source venv/bin/activate 
 pip install -r requirements.txt
-
-# Configure AWS credentials
-aws configure  # Enter your AWS credentials
 
 # Run the backend
 uvicorn src.api.main:app --reload
@@ -87,16 +83,6 @@ npm start
 
 Frontend will open at `http://localhost:3000`
 
-### 3. Set Up DynamoDB (Optional but Recommended)
-```bash
-cd backend
-python setup_dynamodb.py eu-west-1
-```
-
-This enables:
-- Deduplication (same PDF won't be parsed twice)
-- Historical querying by ISIN
-- Fast retrieval of previously parsed PDFs
 
 ### 4. Test It!
 1. Open `http://localhost:3000` in your browser
@@ -105,14 +91,6 @@ This enables:
 4. View structured transactions and export to JSON/CSV
 5. Upload the same PDF again - it will be retrieved from cache!
 
-## Deployment to AWS
-
-```bash
-cd infrastructure
-pip install -r requirements.txt
-cdk bootstrap  # First time only
-cdk deploy
-```
 
 See [Infrastructure README](infrastructure/README.md) for details.
 
